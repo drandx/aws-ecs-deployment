@@ -43,9 +43,12 @@ In order to register a new task the task definition config requires two IAM role
 #### Create Log Group Create one per micro-service and environment)
 `aws logs create-log-group --log-group-name <LOG_GROUP_NAME>`
 #### Register Task
-`aws ecs register-task-definition --cli-input-json file://deploy/dev-task-definition.json`
+Config file template: [example-task-definition.json](https://github.com/drandx/aws-ecs-deployment/blob/master/fargate/example-task-definition.json)
+`aws ecs register-task-definition --cli-input-json file://deploy/example-task-definition.json`
 
 ### 5. Create ECS Service (Create one per micro-service environment)
+Config file template: [example-ecs-service.json](https://github.com/drandx/aws-ecs-deployment/blob/master/fargate/example-ecs-service.json)
+
    1. Create Load Balancer (Only for micro-services)(Create ONLY one for multiple micro-services)
         
         aws elbv2 create-load-balancer --name <LOAD_BALANCER_NAME> --subnets <SUBNET_ID_1> <SUBNET_ID_2> <SUBNET_ID_3>
@@ -60,7 +63,7 @@ In order to register a new task the task definition config requires two IAM role
         
    4. Register Service
         
-        aws ecs create-service --cli-input-json file://deploy/dev-ecs-service.json
+        aws ecs create-service --cli-input-json file://deploy/example-ecs-service.json
         
 ### 6. Push Image to ECR Repository
 ```
