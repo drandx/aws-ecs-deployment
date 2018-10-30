@@ -1,0 +1,21 @@
+{
+    "cluster": "<CLUSTER_NAME>",
+    "serviceName": "<SERVICE_NAME>",
+    "desiredCount": 1,
+    "launchType": "FARGATE",
+    "networkConfiguration": {
+        "awsvpcConfiguration": {
+            "assignPublicIp": "ENABLED",
+            "securityGroups": ["<SECURITY_GROUP_ID>"],
+            "subnets": ["<SUBNET_ID_1>", "<SUBNET_ID_2>", "<SUBNET_ID_2>", "<SUBNET_ID_ETC>"]
+         }
+    },
+    "taskDefinition": "<TASK_DEFINITION_NAME>",
+    "loadBalancers": [
+        {
+            "targetGroupArn": "<TARGET_GROUP_ARN>",
+            "containerName": "<SERVICE_NAME>",
+            "containerPort": 80
+        }
+    ]
+}
