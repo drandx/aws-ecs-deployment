@@ -44,7 +44,8 @@ In order to register a new task the task definition config requires two IAM role
 `aws logs create-log-group --log-group-name <LOG_GROUP_NAME>`
 #### Register Task
 Config file template: [example-task-definition.json](https://github.com/drandx/aws-ecs-deployment/blob/master/fargate/example-task-definition.json)
-`aws ecs register-task-definition --cli-input-json file://deploy/example-task-definition.json`
+
+	`aws ecs register-task-definition --cli-input-json file://deploy/example-task-definition.json`
 
 ### 5. Create ECS Service (Create one per micro-service environment)
 Config file template: [example-ecs-service.json](https://github.com/drandx/aws-ecs-deployment/blob/master/fargate/example-ecs-service.json)
