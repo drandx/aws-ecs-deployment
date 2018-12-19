@@ -1,13 +1,25 @@
 # AWS ECS Deployment Steps
 This guide enumerates the steps needed to deploy either long-running tasks (tasks such as micro-services running inside ECS services) or short-running (tasks that don't require a service configuration) tasks to ECS.
 
+## First Time Deployment Steps
+
 ### 1. Create the ECR Image
 `aws ecr create-repository --repository-name <REPOSITORY_NAME>`
-### 2. Create Cluster (One cluster can handle multiple services)
+
+### 2. Push Image to ECR Repository
+```
+$(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+docker build --tag "${ECR_REPOSITORY_URI}" .
+docker push "${ECR_REPOSITORY_URI}"
+```
+
+### 3. Create Cluster (One cluster can handle multiple services)
 `aws ecs create-cluster --cluster-name <CLUSTER_NAME>`
-### 3. Create Security Group  (Create ONLY one for multiple micro-services)
+
+### 4. Create Security Group  (Create ONLY one for multiple micro-services)
 `aws ec2 create-security-group --group-name my-ecs-sg --description <SECURITY_GROUP_NAME>`
-### 4. Register Task Definition  (Create one per micro-service and environment: dev, qa, uat, prod).
+
+### 5. Register Task Definition  (Create one per micro-service and environment: dev, qa, uat, prod).
 
 #### IAM Roles Creation
 In order to register a new task the task definition config requires two IAM roles (__Execution__ and __Task__) with the next policies on each one:
@@ -47,7 +59,7 @@ Config file template: [example-task-definition.json](https://github.com/drandx/a
 
 	`aws ecs register-task-definition --cli-input-json file://deploy/example-task-definition.json`
 
-### 5. Create ECS Service (Create one per micro-service environment)
+### 6. Create ECS Service (Create one per micro-service environment)
 Config file template: [example-ecs-service.json](https://github.com/drandx/aws-ecs-deployment/blob/master/fargate/example-ecs-service.json)
 
    1. Create Load Balancer (Only for micro-services)(Create ONLY one for multiple micro-services)
@@ -65,10 +77,12 @@ Config file template: [example-ecs-service.json](https://github.com/drandx/aws-e
    4. Register Service
         
         aws ecs create-service --cli-input-json file://deploy/example-ecs-service.json
-        
-### 6. Push Image to ECR Repository
-```
-$(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-docker build --tag "${ECR_REPOSITORY_URI}" .
-docker push "${ECR_REPOSITORY_URI}"
-```
+
+## Update Deployment Steps
+1. Update Task Definition - A new task definition has to be created whenever we want to deploy a new change. ECS will handle the task definition versioning for us.
+	
+	`aws ecs register-task-definition --cli-input-json file://deploy/example-task-definition.json`
+
+2. Update Service - Once this command is executed, ECS will deploy a new task using the new task definition version created in the previous step.
+	
+	`aws ecs update-service --cluster CLUSTER_NAME --service SERVICE_NAME --task-definition TASK_NAME`
